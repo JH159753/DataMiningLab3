@@ -19,53 +19,63 @@ def lloyds(data, k, columns, centers=None, n=None, eps=None):
         #initialize cluster centers?
         if centers is None:
             #random cluster centers
+            centers = []
+            
             for i in range(k):
                 center = []
-                #need to turn Centers into a list to append things to it
-                centers = []
+
                 for j in range(len(columns)):
                     #random.random() should return a value between 0 and 1 
                     center.append(random.random())
                 centers.append(center)
-                print(centers)
+            print(centers)
             
 
         #Clusters is a list of lists, and each list in it has the data instances of that cluster
         clusters = []
-        cluster = []
         #for each center that exists, create one more list in clusters
-        for i in range(len(centers)):
-            clusters.append(cluster)
+        for i in range(k):
+            clusters.append([])
 
         #not one time things here
 
-        #for each item in the data, do this
+        #for each row in the data, do this
         for i in range(len(data)):
-            #set closestCluster to 0 and its distance to 1; maximum distance between two things here should be 1
+            
             closestCluster = 0
-            closestClusterDistance = 1
+            closestClusterDistance = 100
             #for each center, do this
-            for j in range(len(center)):
+            for j in range(len(centers)):
                 #calculate distance between this point and the center
                 
                 #reset the closestDistance
                 currentDistance = 0
                 #For each column, do this
-                for k in range(len(columns)):
-                    #add the value from the data at each column, squared
-                    currentDistance = currentDistance + (data[i][columns][k])^2
+                currentColumn = 0
+                for column in columns:
 
+                    currentDistance = currentDistance + (data.loc[i][column] - centers[j][currentColumn])**2
+                    currentColumn = currentColumn + 1
+                    
                 #after adding all these together, square root the value
-                currentDistance = currentDistance ^ (1/2)
+                currentDistance = currentDistance ** (1/2)
+                
 
                 #if the currentDistance calculated here is less than the minimum, the data point is assigned to this one
                 if currentDistance < closestClusterDistance:
                     closestCluster = j
+                    closestClusterDistance = currentDistance
+                    
+                    
 
             #append the point to whichever cluster is closest
-            clusters[closestCluster].append(data[i])
+            print(closestCluster)
+            clusters[closestCluster].append(data.loc[i])
+
 
         print(clusters[0])
+        
+        
             
 
 

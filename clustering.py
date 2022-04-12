@@ -73,7 +73,7 @@ def lloyds(data, k, columns, centers=None, n=None, eps=None):
                     currentColumn = 0
                     for column in columns:
 
-                        currentDistance = currentDistance + (data.loc[i][column] - centers[j][currentColumn])**2
+                        currentDistance = currentDistance + (data[i][column] - centers[j][currentColumn])**2
                         currentColumn = currentColumn + 1
                         
                     #after adding all these together, square root the value
@@ -88,7 +88,7 @@ def lloyds(data, k, columns, centers=None, n=None, eps=None):
                         
 
                 #append the point to whichever cluster is closest
-                clusters[closestCluster].append(data.loc[i])
+                clusters[closestCluster].append(data[i])
 
             #Now that we have our rows placed in clusters, calculate new cluster center
             #reset center's values
@@ -155,7 +155,18 @@ def kmedoids(data, k, distance, centers=None, n=None, eps=None):
 
 def main():
     #import the data from the csv
-    data = pd.read_csv("testdata.csv")
+    csvdata = pd.read_csv("testdata.csv")
+
+    #declare data as a list
+    data = []
+
+    #for each row in csvdata, make a row in data
+    for i in range(len(csvdata)):
+        data.append([])
+        data[i] = csvdata.loc[i]
+
+    
+
     columns = [1, 2, 3, 4]
     lloyds(data, 2, columns, None, 10, .1)
 

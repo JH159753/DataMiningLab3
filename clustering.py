@@ -39,6 +39,8 @@ def lloyds(data, k, columns, centers=None, n=None, eps=None):
 
         #not one time things here
         iterations = 0
+        if (n is None):
+            n = math.inf
 
         while (iterations < n):
             
@@ -113,38 +115,31 @@ def lloyds(data, k, columns, centers=None, n=None, eps=None):
                     
             for i in range(len(centers)):
                 for j in range(len(centers[i])):
-                    centers[i][j] = centers[i][j] / len(clusters[i])
+                    if (len(clusters[i]) != 0):
+                        centers[i][j] = centers[i][j] / len(clusters[i])
 
             print (centers)
 
             #compare old center to this if eps is not none
             if (eps is not None):
-                minDistanceMoved = math.inf
+                
                 distanceMoved = 0
+                averageDistanceMoved = 0
                 for i in range(len(centers)):
                     for j in range(len(centers[i])):
                         distanceMoved = distanceMoved + (centers[i][j] - oldCenters[i][j])**2 
                     distanceMoved = distanceMoved**(1/2)
                     print(distanceMoved)
 
-                    if (distanceMoved < minDistanceMoved):
-                        minDistanceMoved = distanceMoved
+                    averageDistanceMoved = averageDistanceMoved + distanceMoved
                         
-
-
-                if (distanceMoved < eps):
+                averageDistanceMoved = averageDistanceMoved / len(centers)
+                print (averageDistanceMoved)
+                if (averageDistanceMoved < eps):
                     break
 
-
-
-            
-        
-        
-            
-
-
-
     # This function has to return a list of k cluster centers (lists of floats of the same length as columns)
+    return centers
     pass
     
 # DO NOT CHANGE THE FOLLOWING LINE

@@ -3,6 +3,7 @@ import math
 import csv
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
     
 
 
@@ -118,7 +119,7 @@ def lloyds(data, k, columns, centers=None, n=None, eps=None):
                     if (len(clusters[i]) != 0):
                         centers[i][j] = centers[i][j] / len(clusters[i])
 
-            print (centers)
+            #print (centers)
 
             #compare old center to this if eps is not none
             if (eps is not None):
@@ -129,12 +130,12 @@ def lloyds(data, k, columns, centers=None, n=None, eps=None):
                     for j in range(len(centers[i])):
                         distanceMoved = distanceMoved + (centers[i][j] - oldCenters[i][j])**2 
                     distanceMoved = distanceMoved**(1/2)
-                    print(distanceMoved)
+                    #print(distanceMoved)
 
                     averageDistanceMoved = averageDistanceMoved + distanceMoved
                         
                 averageDistanceMoved = averageDistanceMoved / len(centers)
-                print (averageDistanceMoved)
+                #print (averageDistanceMoved)
                 if (averageDistanceMoved < eps):
                     break
 
@@ -148,9 +149,49 @@ def kmedoids(data, k, distance, centers=None, n=None, eps=None):
     # This function has to return a list of k cluster centroids (data instances!)
     pass
 
+#stolen from testcases.py
+def plot(data, centers, x, y, scale=None):
+    def dist(point,center):
+        return math.sqrt((point[x] - center[0])**2 + (point[y] - center[1])**2)
+    xs, ys, colors = [], [], []
+    for d in data:
+        mind = None 
+        cluster = None 
+        for i,c in enumerate(centers):
+            delta = dist(d, c)
+            if mind is None or delta < mind:
+                mind = delta
+                cluster = i
+        xs.append(d[x])
+        ys.append(d[y])
+        colors.append(cluster)
+        
+    cxs, cys, ccolors = [], [], []
+    for i,c in enumerate(centers):
+        cxs.append(c[0])
+        cys.append(c[1])
+        ccolors.append(i)
+    if scale is None:
+        fr = min(min(xs), min(ys), min(cxs), min(cys))
+        to = max(max(xs), max(ys), max(cys), max(cys))
+        range = (to-fr)
+        fr -= 0.01*range
+        to += 0.01*range
+    else:
+        fr,to = scale
+    plt.scatter(xs, ys, c=colors)
+    plt.scatter(cxs, cys, c=ccolors, marker = "+")
+    plt.xlim((fr,to))
+    plt.ylim((fr,to))
+    plt.show()
+
+def show_centers(centers):
+    for i,c in enumerate(centers):
+        print(f"   cluster center {i+1}: {tuple(c)}")
+
 def main():
     #import the data from the csv
-    csvdata = pd.read_csv("testdata.csv")
+    csvdata = pd.read_csv("spotify.csv")
 
     #declare data as a list
     data = []
@@ -162,8 +203,10 @@ def main():
 
     
 
-    columns = [1, 2, 3, 4]
-    lloyds(data, 2, columns, None, 10, .1)
+    columns = [2, 4]
+    centers = lloyds(data, 3, columns, None, 100, .001)
+    plot(data, centers, 1, 2, scale=(0,1))
+    show_centers(centers)
 
 if __name__ == '__main__':
     main()
